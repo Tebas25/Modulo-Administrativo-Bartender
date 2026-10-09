@@ -14,11 +14,11 @@ export type ButtonVariant =
   | 'outline-primary'
   | 'outline-neutral';
 
-export type SizeButton = 'sm' | 'default' | 'lg';
+export type SizeButton = 'sm' | 'default' | 'lg' | 'xl';
 
 const variantStyles: Record<ButtonVariant, string> = {
   primary:
-    'bg-blue-600 text-white hover:bg-blue-500 shadow-sm shadow-blue-500/20',
+    'bg-gold-600 text-white hover:bg-gold-700 font-semibold shadow-lg shadow-gold-600/30',
   success:
     'bg-emerald-600 text-white hover:bg-emerald-500 shadow-sm shadow-emerald-500/20',
   info: 'bg-[#3b9ab8] text-white hover:bg-[#32839c]',
@@ -45,6 +45,7 @@ const sizeStyles: Record<SizeButton, string> = {
   sm: 'h-8 px-3 text-xs',
   default: 'h-10 px-4 text-sm',
   lg: 'h-12 px-6 text-base',
+  xl: 'h-14 px-10 text-lg',
 };
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
