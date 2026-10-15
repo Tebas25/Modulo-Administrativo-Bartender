@@ -66,6 +66,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ) => (
     <button
       ref={ref}
+      type={type}
       className={[
         'inline-flex items-center justify-center gap-2 rounded-md font-medium',
         'transition-colors focus-visible:ring-2 focus-visible:outline-none',
