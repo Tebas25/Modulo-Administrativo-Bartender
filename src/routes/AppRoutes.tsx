@@ -1,6 +1,7 @@
 import { Route, Routes } from 'react-router-dom';
 import LoginPage from '../pages/LoginPage';
 import { ProtectedRoute } from './ProtectedRoute';
+import { ROUTES } from '../constants/routes.constants';
 
 function DashboardPlaceholder() {
   return <h1>Panel de Administración (Protegido)</h1>;
@@ -9,10 +10,10 @@ function DashboardPlaceholder() {
 export default function AppRoute() {
   return (
     <Routes>
-      <Route path="/login" element={<LoginPage />} />
+      <Route path={ROUTES.login} element={<LoginPage />} />
 
       <Route element={<ProtectedRoute />}>
-        <Route path="/dashboard" element={<DashboardPlaceholder />} />
+        <Route path={ROUTES.dashboard} element={<DashboardPlaceholder />} />
       </Route>
     </Routes>
   );

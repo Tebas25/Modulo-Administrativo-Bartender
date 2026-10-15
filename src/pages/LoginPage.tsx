@@ -46,6 +46,12 @@ export default function LoginScreen() {
               />
             </div>
 
+            {error && (
+              <p role="alert" className="text-sm font-medium text-red-400">
+                {error}
+              </p>
+            )}
+
             <Button
               type="submit"
               variant="primary"

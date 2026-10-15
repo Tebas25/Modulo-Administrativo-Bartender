@@ -3,6 +3,7 @@ import { useAuth } from './useAuth';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import type { LoginDTO } from '../types/auth.dto';
+import { ROUTES } from '../constants/routes.constants';
 
 export const useLoginForm = () => {
   const navigate = useNavigate();
@@ -18,7 +19,7 @@ export const useLoginForm = () => {
         setError('');
         setLoading(true);
         await login(formData);
-        navigate('/home', { replace: true });
+        navigate(ROUTES.dashboard, { replace: true });
       } catch (err) {
         setError(
           err instanceof Error

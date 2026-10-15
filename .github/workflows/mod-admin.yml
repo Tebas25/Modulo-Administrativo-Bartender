@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [main, develop, 'setup-ci/cd']
+    branches: [main, develop]
   pull_request:
   workflow_dispatch:
 
@@ -18,6 +18,8 @@ jobs:
     name: CI
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    env:
+      CI: true
     steps:
       - uses: actions/checkout@v4
 
@@ -26,28 +28,22 @@ jobs:
           node-version: 22
           cache: npm
 
-      - run: npm ci
-
-      - name: Detectar pruebas disponibles
-        id: tools
-        run: |
-          echo "vitest=$(grep -q '"vitest"' package.json && echo true || echo false)" >> "$GITHUB_OUTPUT"
-          echo "playwright=$(ls playwright.config.* >/dev/null 2>&1 && echo true || echo false)" >> "$GITHUB_OUTPUT"
+      - name: Instalar dependencias
+        run: npm ci
 
       # --- Calidad estática ---
       - name: ESLint
-        run: npx eslint .
+        run: npm run lint
 
       - name: Prettier
-        run: npx prettier --check .
+        run: npm run format:check
 
       - name: TypeScript
-        run: npx tsc -b
+        run: npm run typecheck
 
       # --- Unitarias / componentes / integración ---
       - name: Vitest
-        if: steps.tools.outputs.vitest == 'true'
-        run: npx vitest run --passWithNoTests
+        run: npm test
 
       # --- Build ---
       - name: Build
@@ -55,16 +51,18 @@ jobs:
 
       # --- E2E (solo Chromium, flujos críticos) ---
       - name: Instalar Chromium
-        if: steps.tools.outputs.playwright == 'true'
         run: npx playwright install --with-deps chromium
 
       - name: Playwright E2E
-        if: steps.tools.outputs.playwright == 'true'
-        run: npx playwright test --project=chromium --pass-with-no-tests
+        run: npm run test:e2e -- --project=chromium
 
-      - uses: actions/upload-artifact@v4
-        if: failure() && steps.tools.outputs.playwright == 'true'
+      - name: Subir reporte de Playwright
+        uses: actions/upload-artifact@v4
+        if: failure()
         with:
           name: playwright-report
-          path: playwright-report
+          path: |
+            playwright-report
+            test-results
           if-no-files-found: ignore
+          retention-days: 7
