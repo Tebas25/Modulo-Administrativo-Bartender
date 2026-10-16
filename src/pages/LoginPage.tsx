@@ -2,10 +2,17 @@ import { FloatingInput } from '../components/FloatingLabel.component';
 import { Button } from '../components/Button.component';
 import barImage from '../assets/bar_image.jpg';
 import { useLoginForm } from '../hooks/useLoginForm';
+import { useAuth } from '../hooks/useAuth';
+import { Navigate } from 'react-router-dom';
+import { ROUTES } from '../constants/routes.constants';
 
 export default function LoginScreen() {
   const { handleSubmitLogin, isLoading, error, clearError, register, errors } =
     useLoginForm();
+  const { isAuthenticated } = useAuth();
+  if (isAuthenticated) {
+    return <Navigate to={ROUTES.dashboard} replace />;
+  }
   return (
     <div className="bg-bar-950 flex min-h-screen w-full">
       {/* Panel del formulario */}

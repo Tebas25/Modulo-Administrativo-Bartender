@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import { ACCESS_TOKEN_KEY } from '../src/constants/endpoints.constants.ts';
 
 const LOGIN_API = '**/api/v1/auth/login';
 const cors = { 'access-control-allow-origin': '*' };
@@ -55,5 +56,21 @@ test.describe('Autenticación', () => {
     );
     await expect(page.getByText('Usuario no existe')).toHaveCount(0);
     await expect(page).toHaveURL(/\/login/);
+  });
+
+  test('con sesión, /login lleva al dashboard y "atrás" no vuelve al login', async ({
+    page,
+  }) => {
+    await page.goto('/login');
+    await page.evaluate(
+      (key) => localStorage.setItem(key, 'token-falso'),
+      ACCESS_TOKEN_KEY,
+    );
+
+    await page.goto('/login');
+    await expect(page).toHaveURL(/\/dashboard/);
+
+    await page.goBack();
+    await expect(page).not.toHaveURL(/\/login/);
   });
 });
