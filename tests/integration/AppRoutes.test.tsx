@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { ACCESS_TOKEN_KEY } from '../../src/constants/endpoints.constants';
 import { AuthProvider } from '../../src/providers/AuthProvider';
 import AppRoutes from '../../src/routes/AppRoutes';
+import { validToken } from '../helpers/jwt';
 
 const renderAt = (path: string) =>
   render(
@@ -34,7 +35,7 @@ describe('AppRoutes con sesión', () => {
   it.each(['/login', '/dashboard', '/ruta-inexistente'])(
     '%s termina en el dashboard',
     (path) => {
-      localStorage.setItem(ACCESS_TOKEN_KEY, 'token-valido');
+      localStorage.setItem(ACCESS_TOKEN_KEY, validToken());
 
       renderAt(path);
 
@@ -44,7 +45,7 @@ describe('AppRoutes con sesión', () => {
   );
 
   it('/ pasa por el login y termina en el dashboard', () => {
-    localStorage.setItem(ACCESS_TOKEN_KEY, 'token-valido');
+    localStorage.setItem(ACCESS_TOKEN_KEY, validToken());
 
     renderAt('/');
 

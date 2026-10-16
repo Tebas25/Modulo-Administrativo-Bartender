@@ -1,5 +1,6 @@
 export const API_BASE_URL = 'http://localhost:9000';
 export const ACCESS_TOKEN_KEY = 'access_token';
+export const AUTH_UNAUTHORIZED_EVENT = 'no_token';
 
 export const LOGIN_ERROR_MESSAGES = {
   invalidCredentials: 'Correo o contraseña incorrectos',

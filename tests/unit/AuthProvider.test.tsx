@@ -1,9 +1,13 @@
 import { act, renderHook } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { loginUser } from '../../src/api/auth.request';
-import { ACCESS_TOKEN_KEY } from '../../src/constants/endpoints.constants';
+import {
+  ACCESS_TOKEN_KEY,
+  AUTH_UNAUTHORIZED_EVENT,
+} from '../../src/constants/endpoints.constants';
 import { useAuth } from '../../src/hooks/useAuth';
 import { AuthProvider } from '../../src/providers/AuthProvider';
+import { expiredToken, validToken } from '../helpers/jwt';
 
 vi.mock('../../src/api/auth.request');
 
@@ -19,7 +23,7 @@ describe('AuthProvider + useAuth', () => {
   });
 
   it('inicia con sesión cuando ya hay un token en localStorage', () => {
-    localStorage.setItem(ACCESS_TOKEN_KEY, 'token-guardado');
+    localStorage.setItem(ACCESS_TOKEN_KEY, validToken());
 
     const { result } = renderAuth();
 
@@ -57,7 +61,7 @@ describe('AuthProvider + useAuth', () => {
   });
 
   it('logout borra el token y cierra la sesión', () => {
-    localStorage.setItem(ACCESS_TOKEN_KEY, 'token-guardado');
+    localStorage.setItem(ACCESS_TOKEN_KEY, validToken());
     const { result } = renderAuth();
 
     act(() => {
@@ -75,5 +79,25 @@ describe('AuthProvider + useAuth', () => {
     expect(() => renderHook(() => useAuth())).toThrow(
       'useAuth debe usarse dentro de un <AuthProvider>',
     );
+  });
+
+  it('inicia sin sesión y borra el token cuando está vencido', () => {
+    localStorage.setItem(ACCESS_TOKEN_KEY, expiredToken());
+
+    const { result } = renderAuth();
+
+    expect(result.current.isAuthenticated).toBe(false);
+    expect(localStorage.getItem(ACCESS_TOKEN_KEY)).toBeNull();
+  });
+
+  it('el evento de no autorizado cierra la sesión', () => {
+    localStorage.setItem(ACCESS_TOKEN_KEY, validToken());
+    const { result } = renderAuth();
+
+    act(() => {
+      window.dispatchEvent(new Event(AUTH_UNAUTHORIZED_EVENT));
+    });
+
+    expect(result.current.isAuthenticated).toBe(false);
   });
 });

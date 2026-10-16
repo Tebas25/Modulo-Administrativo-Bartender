@@ -10,6 +10,15 @@ async function fillAndSubmit(page: Page, email: string, password: string) {
   await page.getByRole('button', { name: 'Ingresar' }).click();
 }
 
+const base64url = (value: object) =>
+  Buffer.from(JSON.stringify(value)).toString('base64url');
+
+const fakeJwt = () =>
+  `${base64url({ alg: 'RS256', typ: 'JWT' })}.${base64url({
+    sub: '1',
+    exp: Math.floor(Date.now() / 1000) + 3600,
+  })}.firma`;
+
 test.describe('Autenticación', () => {
   test('login exitoso lleva al dashboard', async ({ page }) => {
     await page.route(LOGIN_API, (route) =>
@@ -18,7 +27,7 @@ test.describe('Autenticación', () => {
         contentType: 'application/json',
         headers: cors,
         body: JSON.stringify({
-          access_token: 'token-falso',
+          access_token: fakeJwt(),
           token_type: 'bearer',
         }),
       }),
@@ -63,8 +72,8 @@ test.describe('Autenticación', () => {
   }) => {
     await page.goto('/login');
     await page.evaluate(
-      (key) => localStorage.setItem(key, 'token-falso'),
-      ACCESS_TOKEN_KEY,
+      ([key, token]) => localStorage.setItem(key, token),
+      [ACCESS_TOKEN_KEY, fakeJwt()],
     );
 
     await page.goto('/login');

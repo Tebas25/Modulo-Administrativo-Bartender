@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { ACCESS_TOKEN_KEY } from '../../src/constants/endpoints.constants';
 import { AuthProvider } from '../../src/providers/AuthProvider';
 import { ProtectedRoute } from '../../src/routes/ProtectedRoute';
+import { validToken } from '../helpers/jwt';
 
 const renderAt = (path: string) =>
   render(
@@ -28,7 +29,7 @@ describe('ProtectedRoute', () => {
   });
 
   it('muestra el contenido cuando hay sesión', () => {
-    localStorage.setItem(ACCESS_TOKEN_KEY, 'token-valido');
+    localStorage.setItem(ACCESS_TOKEN_KEY, validToken());
 
     renderAt('/dashboard');
 
