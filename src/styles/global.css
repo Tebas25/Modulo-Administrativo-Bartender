@@ -1,1 +1,14 @@
 @import 'tailwindcss';
+
+@theme {
+  --color-bar-950: #070b10;
+  --color-bar-900: #0d141c;
+  --color-bar-800: #16212d;
+
+  --color-steel-300: #a9c1da;
+  --color-steel-400: #7fa0c3;
+
+  --color-gold-500: #c9964a;
+  --color-gold-600: #ab7a3a;
+  --color-gold-700: #8f6630;
+}
