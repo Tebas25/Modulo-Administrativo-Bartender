@@ -2,19 +2,25 @@ import { createRef } from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
-import { Button } from '../../src/components/Button.component'
+import { Button } from '../../src/components/Button.component';
 
 describe('Button', () => {
   it('muestra su contenido y es type="button" por defecto', () => {
     render(<Button>Guardar</Button>);
 
-    expect(screen.getByRole('button', { name: 'Guardar' })).toHaveAttribute('type', 'button');
+    expect(screen.getByRole('button', { name: 'Guardar' })).toHaveAttribute(
+      'type',
+      'button',
+    );
   });
 
   it('respeta type="submit" cuando se indica', () => {
     render(<Button type="submit">Enviar</Button>);
 
-    expect(screen.getByRole('button', { name: 'Enviar' })).toHaveAttribute('type', 'submit');
+    expect(screen.getByRole('button', { name: 'Enviar' })).toHaveAttribute(
+      'type',
+      'submit',
+    );
   });
 
   it('ejecuta onClick al hacer clic', async () => {
