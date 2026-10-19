@@ -11,7 +11,7 @@ export default function LoginScreen() {
     useLoginForm();
   const { isAuthenticated } = useAuth();
   if (isAuthenticated) {
-    return <Navigate to={ROUTES.dashboard} replace />;
+    return <Navigate to={ROUTES.resume} replace />;
   }
   return (
     <div className="bg-bar-950 flex min-h-screen w-full">

@@ -1,4 +1,4 @@
-import axios, { isAxiosError } from 'axios';
+import { isAxiosError } from 'axios';
 import type {
   DrinksDto,
   UpdateItemPriceDto,
@@ -12,8 +12,8 @@ import { apiClient } from './axios.instance';
 
 export const getAllDrinks = async (cobotId: string): Promise<DrinksDto> => {
   try {
-    const url = `${API_BASE_URL}/catalog/get/${cobotId}`;
-    const response = await axios.get<DrinksDto>(url);
+    const url = `${API_BASE_URL}/admin/catalog/get/${cobotId}`;
+    const response = await apiClient.get<DrinksDto>(url);
     return response.data;
   } catch (error) {
     if (isAxiosError(error)) {
