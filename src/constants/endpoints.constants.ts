@@ -7,3 +7,11 @@ export const LOGIN_ERROR_MESSAGES = {
   unavailable:
     'No se pudo conectar con el servidor. Intente de nuevo más tarde',
 };
+
+export const DRINKS_ERROR_MESSAGES = {
+  unavailable: 'Ha ocurrido un error. Inténtelo de nuevo más tarde',
+  updateDrinkFailed:
+    'No se ha podido actualizar el precio. Inténtelo de nuevo más tarde',
+  updateStateFailed:
+    'No se ha podido actualizar la viabilidad. Inténtelo de nuevo más tarde',
+};
