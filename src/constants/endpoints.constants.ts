@@ -15,3 +15,7 @@ export const DRINKS_ERROR_MESSAGES = {
   updateStateFailed:
     'No se ha podido actualizar la viabilidad. Inténtelo de nuevo más tarde',
 };
+
+export const COBOT_ERROR_MESSAGES = {
+  unavailable: 'Ha ocurrido un error. Inténtelo de nuevo más tarde',
+};

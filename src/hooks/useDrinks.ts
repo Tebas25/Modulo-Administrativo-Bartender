@@ -10,19 +10,34 @@ export const useDrinks = (cobotId: string) => {
   const [pendingNames, setPendingNames] = useState<string[]>([]);
   const [toggleError, setToggleError] = useState<string | null>(null);
 
-  const fetchDrinks = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const result = await getAllDrinks(cobotId);
-      setDrinks(result.items ?? []);
-    } catch (err) {
-      setError(
-        err instanceof Error ? err.message : DRINKS_ERROR_MESSAGES.unavailable,
-      );
-    } finally {
-      setLoading(false);
-    }
+  useEffect(() => {
+    let canceled = false;
+    const load = async () => {
+      try {
+        const result = await getAllDrinks(cobotId);
+        if (canceled) {
+          return;
+        }
+        setDrinks(result.items ?? []);
+      } catch (err) {
+        if (canceled) {
+          return;
+        }
+        setError(
+          err instanceof Error
+            ? err.message
+            : DRINKS_ERROR_MESSAGES.unavailable,
+        );
+      } finally {
+        if (!canceled) {
+          setLoading(false);
+        }
+      }
+    };
+    load();
+    return () => {
+      canceled = true;
+    };
   }, [cobotId]);
 
   const toggleDrink = useCallback(
@@ -51,10 +66,6 @@ export const useDrinks = (cobotId: string) => {
     },
     [cobotId, pendingNames],
   );
-
-  useEffect(() => {
-    fetchDrinks();
-  }, [fetchDrinks]);
 
   return {
     drinks,
