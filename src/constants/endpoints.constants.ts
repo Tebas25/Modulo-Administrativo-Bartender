@@ -14,6 +14,8 @@ export const DRINKS_ERROR_MESSAGES = {
     'No se ha podido actualizar el precio. Inténtelo de nuevo más tarde',
   updateStateFailed:
     'No se ha podido actualizar la viabilidad. Inténtelo de nuevo más tarde',
+  createNewDrink:
+    'No se ha podido crear la bebida. Inténtelo de nuevo más tarde',
 };
 
 export const COBOT_ERROR_MESSAGES = {

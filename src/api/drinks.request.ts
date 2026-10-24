@@ -1,8 +1,10 @@
 import { isAxiosError } from 'axios';
 import type {
-  DrinksDto,
+  SentCreateNewDrinkDto,
+  CreateNewDrinkDto,
   UpdateItemPriceDto,
   UpdateItemStateDto,
+  DrinksDto,
 } from '../types/drinks.dto';
 import {
   API_BASE_URL,
@@ -64,6 +66,27 @@ export const updateDrinkAvailability = async (
       throw new Error(DRINKS_ERROR_MESSAGES.updateStateFailed, {
         cause: error,
       });
+    }
+    throw error;
+  }
+};
+
+export const createNewDrink = async (
+  createNewDrink: CreateNewDrinkDto,
+): Promise<void> => {
+  const payload: SentCreateNewDrinkDto = {
+    nombre_item: createNewDrink.itemName,
+    precio_item: createNewDrink.itemPrice,
+    estado: createNewDrink.state,
+    ingredientes: createNewDrink.ingredients,
+    codigo_modbus: createNewDrink.modbusCode,
+    id_cobot: createNewDrink.cobotId,
+  };
+  try {
+    await apiClient.post('/catalog/add-item', payload);
+  } catch (error) {
+    if (isAxiosError(error)) {
+      throw new Error(DRINKS_ERROR_MESSAGES.createNewDrink, { cause: error });
     }
     throw error;
   }
