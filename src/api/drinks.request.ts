@@ -79,7 +79,6 @@ export const createNewDrink = async (
     precio_item: createNewDrink.itemPrice,
     estado: createNewDrink.state,
     ingredientes: createNewDrink.ingredients,
-    codigo_modbus: createNewDrink.modbusCode,
     id_cobot: createNewDrink.cobotId,
   };
   try {

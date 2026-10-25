@@ -70,16 +70,6 @@ export const useCreateDrinkForm = (onSuccess: () => void) => {
         }),
         ...toInputState(errors.itemPrice?.message),
       },
-      modbusCode: {
-        ...register('modbusCode', {
-          valueAsNumber: true,
-          required: 'Ingrese el código Modbus',
-          min: { value: 1, message: 'Debe ser 1 o mayor' },
-          validate: (value) =>
-            Number.isInteger(value) || 'Debe ser un número entero',
-        }),
-        ...toInputState(errors.modbusCode?.message),
-      },
     },
     cobotField: {
       value: cobot.field.value,

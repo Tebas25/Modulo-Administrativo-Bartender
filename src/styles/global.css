@@ -1,20 +1,29 @@
 @import 'tailwindcss';
 
 @theme {
-  --color-bar-950: #070b10;
-  --color-bar-900: #0d141c;
-  --color-bar-800: #16212d;
+  /* OPCIÓN A (Activa): Espresso & Barrica Ahumada (Cálido, cero azul) */
+  /* --color-bar-950: #14110f;
+  --color-bar-900: #1f1916;
+  --color-bar-800: #2e2520; */
 
-  --color-steel-300: #a9c1da;
-  --color-steel-400: #7fa0c3;
+  /* OPCIÓN B: Si prefieres Burdeos / Vino Nocturno, descomenta estas 3: */
+  /* --color-bar-950: #190e12;
+  --color-bar-900: #26151b;
+  --color-bar-800: #381f28; */
 
+  /* OPCIÓN C: Si prefieres Verde Botánico / Gin Lounge, descomenta estas 3: */
+  --color-bar-950: #0c1713;
+  --color-bar-900: #13241e;
+  --color-bar-800: #1c332b;
+
+  /* Tonos Crema / Piedra Cálida (Reemplaza el gris azulado frío) */
+  --color-steel-300: #d6cfc7;
+  --color-steel-400: #a89f94;
+
+  /* Tus Tonos Dorados / Ámbar */
+  --color-gold-50: #fbf7f0;
+  --color-gold-100: #f5ebd9;
   --color-gold-500: #c9964a;
   --color-gold-600: #ab7a3a;
   --color-gold-700: #8f6630;
-
-  --color-navy-50: #eef3f9;
-  --color-navy-100: #dbe6f2;
-  --color-navy-600: #386190;
-  --color-navy-700: #2d4f78;
-  --color-navy-800: #223c5c;
 }

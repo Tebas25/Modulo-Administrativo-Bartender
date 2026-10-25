@@ -1,4 +1,5 @@
 import { DataTable, type Column } from '../components/DataTable.component';
+import { Loading } from '../components/Loading.component';
 import { Switch } from '../components/Switch.component';
 import { useDrinks } from '../hooks/useDrinks';
 import type { DrinkItemDto } from '../types/drinks.dto';
@@ -49,7 +50,7 @@ export default function DrinkMenu({ cobotId }: DrinkMenuProps) {
 
       {isLoading ? (
         <p role="status" className="text-xl text-slate-700">
-          Cargando menú...
+          <Loading size="lg" centered />
         </p>
       ) : error ? (
         <p role="alert" className="text-lg font-medium text-red-600">
