@@ -13,9 +13,9 @@ export default function AppRoute() {
 
       <Route element={<ProtectedRoute />}>
         <Route element={<AdminLayout />}>
-          <Route path={ROUTES.resume} element={<DrinksPage />} />
+          <Route path={ROUTES.menu} element={<DrinksPage />} />
         </Route>
-        <Route path="*" element={<Navigate to={ROUTES.resume} replace />} />
+        <Route path="*" element={<Navigate to={ROUTES.menu} replace />} />
       </Route>
     </Routes>
   );

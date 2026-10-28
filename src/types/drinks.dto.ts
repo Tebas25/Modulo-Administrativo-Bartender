@@ -25,6 +25,7 @@ export interface SentCreateNewDrinkDto {
   precio_item: number;
   estado: boolean;
   ingredientes: string;
+  codigo_modbus: number;
   id_cobot: string;
 }
 
@@ -34,4 +35,5 @@ export interface CreateNewDrinkDto {
   state: boolean;
   ingredients: string;
   cobotId: string;
+  modbusCode: number;
 }

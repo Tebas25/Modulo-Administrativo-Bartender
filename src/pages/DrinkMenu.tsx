@@ -49,9 +49,9 @@ export default function DrinkMenu({ cobotId }: DrinkMenuProps) {
       )}
 
       {isLoading ? (
-        <p role="status" className="text-xl text-slate-700">
+        <div className="text-xl text-slate-700">
           <Loading size="lg" centered />
-        </p>
+        </div>
       ) : error ? (
         <p role="alert" className="text-lg font-medium text-red-600">
           {error}

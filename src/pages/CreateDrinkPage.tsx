@@ -96,6 +96,15 @@ export function CreateDrinkModal({
             inputMode="decimal"
             {...fields.itemPrice}
           />
+
+          <FloatingInput
+            label="Código Modbus"
+            tone="light"
+            type="number"
+            step="0.01"
+            inputMode="decimal"
+            {...fields.modbusCode}
+          />
         </div>
 
         <div>
