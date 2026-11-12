@@ -1,11 +1,11 @@
 export interface AddMenuItemDto {
   itemName: string;
   cobotId: string;
-  itemPrice: string;
+  itemPrice: number;
 }
 
 export interface SentAddMenuItemDto {
   nombre_item: string;
   id_cobot: string;
-  precio_item: string;
+  precio_item: number;
 }

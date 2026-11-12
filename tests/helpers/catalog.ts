@@ -5,10 +5,15 @@ import { vi } from 'vitest';
 import { apiClient } from '../../src/api/axios.instance';
 import { API_BASE_URL } from '../../src/constants/endpoints.constants';
 import type { CobotDto } from '../../src/types/cobot.dto';
-import type { DrinksDto } from '../../src/types/drinks.dto';
+import type {
+  DrinksDto,
+  GetDrinkCatalogDto,
+  SentCreateNewDrinkDto,
+} from '../../src/types/drinks.dto';
 
 export const COBOT_ID = 'CBT000T';
 export const COBOTS_URL = `${API_BASE_URL}/catalog/cobots`;
+export const ALL_ITEMS_URL = `${API_BASE_URL}/catalog/all-items`;
 export const drinksUrl = (cobotId: string) =>
   `${API_BASE_URL}/admin/catalog/get/${cobotId}`;
 
@@ -16,6 +21,13 @@ export const COBOTS: CobotDto = {
   items: [
     { id_cobot: 'CBT000T', nombre_cobot: 'Cobot JAKA' },
     { id_cobot: 'CBT001', nombre_cobot: 'Cobot Norte' },
+  ],
+};
+
+export const CATALOG_ITEMS: GetDrinkCatalogDto = {
+  items: [
+    { id_item: 1, nombre_item: 'Mojito Clásico' },
+    { id_item: 2, nombre_item: 'Ron con Cola' },
   ],
 };
 
@@ -31,13 +43,11 @@ export const MENU_NORTE: DrinksDto = {
 };
 
 // Cuerpo que debe recibir el backend tras llenar el formulario con fillDrinkForm.
-export const NEW_DRINK_PAYLOAD = {
+export const NEW_DRINK_PAYLOAD: SentCreateNewDrinkDto = {
   nombre_item: 'Ron con Cola',
-  precio_item: 5.5,
-  estado: true,
   ingredientes: 'Ron, Coca-Cola',
+  imagen: 'https://ejemplo.com/ron-con-cola.png',
   codigo_modbus: 7,
-  id_cobot: COBOT_ID,
 };
 
 export const ok = (data: unknown) => ({ data }) as AxiosResponse;
@@ -67,13 +77,14 @@ export const countCalls = (
   url: string,
 ) => spy.mock.calls.filter(([calledUrl]) => calledUrl === url).length;
 
-// Llena el formulario de "Agregar bebida" con los valores de NEW_DRINK_PAYLOAD.
+// Llena el formulario de "Crear nueva bebida" con los valores de NEW_DRINK_PAYLOAD.
 export async function fillDrinkForm(user: UserEvent, dialog: HTMLElement) {
   const form = within(dialog);
-  await user.click(form.getByRole('button', { name: /^Cobot/ }));
-  await user.click(form.getByRole('option', { name: 'Cobot JAKA' }));
   await user.type(form.getByLabelText('Nombre'), 'Ron con Cola');
   await user.type(form.getByLabelText('Ingredientes'), 'Ron, Coca-Cola');
-  await user.type(form.getByLabelText('Precio'), '5.5');
+  await user.type(
+    form.getByLabelText('URL de la imagen'),
+    'https://ejemplo.com/ron-con-cola.png',
+  );
   await user.type(form.getByLabelText('Código Modbus'), '7');
 }

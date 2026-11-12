@@ -2,7 +2,11 @@ import { act, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent, { type UserEvent } from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import { apiClient } from '../../src/api/axios.instance';
-import { COBOT_ERROR_MESSAGES } from '../../src/constants/endpoints.constants';
+import { ToastProvider } from '../../src/components/Toast.provider';
+import {
+  API_BASE_URL,
+  COBOT_ERROR_MESSAGES,
+} from '../../src/constants/endpoints.constants';
 import DrinkPage from '../../src/pages/DrinkPage';
 import type { DrinksDto } from '../../src/types/drinks.dto';
 import {
@@ -20,6 +24,13 @@ import {
   ok,
 } from '../helpers/catalog';
 
+const renderPage = () =>
+  render(
+    <ToastProvider>
+      <DrinkPage />
+    </ToastProvider>,
+  );
+
 // El selector de la página es el único botón con aria-expanded="false" mientras no hay modal.
 const getCobotTrigger = () => screen.getByRole('button', { expanded: false });
 
@@ -32,14 +43,17 @@ async function chooseCobot(user: UserEvent, name: string) {
 describe('DrinkPage', () => {
   it('al entrar pide elegir un cobot y no muestra ninguna tabla', async () => {
     mockGet({ [COBOTS_URL]: () => COBOTS });
-    render(<DrinkPage />);
+    renderPage();
 
     expect(
       screen.getByText('Elija un cobot para ver y configurar su menú.'),
     ).toBeInTheDocument();
     await waitFor(() => expect(getCobotTrigger()).toBeEnabled());
     expect(
-      screen.getByRole('button', { name: 'Agregar bebida' }),
+      screen.getByRole('button', { name: 'Crear nueva bebida' }),
+    ).toBeEnabled();
+    expect(
+      screen.getByRole('button', { name: 'Añadir bebida al menú' }),
     ).toBeEnabled();
     expect(screen.queryByRole('table')).not.toBeInTheDocument();
   });
@@ -51,7 +65,7 @@ describe('DrinkPage', () => {
       [drinksUrl('CBT000T')]: () => MENU_JAKA,
       [drinksUrl('CBT001')]: () => MENU_NORTE,
     });
-    render(<DrinkPage />);
+    renderPage();
 
     await chooseCobot(user, 'Cobot JAKA');
     const table = await screen.findByRole('table', {
@@ -64,19 +78,22 @@ describe('DrinkPage', () => {
     expect(screen.queryByText('Mojito Clásico')).not.toBeInTheDocument();
   });
 
-  it('si falla la lista de cobots, muestra el error y no deja agregar bebidas', async () => {
+  it('si falla la lista de cobots, muestra el error y no deja crear ni añadir bebidas', async () => {
     mockGet({
       [COBOTS_URL]: () => {
         throw networkError();
       },
     });
-    render(<DrinkPage />);
+    renderPage();
 
     expect(await screen.findByRole('alert')).toHaveTextContent(
       COBOT_ERROR_MESSAGES.unavailable,
     );
     expect(
-      screen.getByRole('button', { name: 'Agregar bebida' }),
+      screen.getByRole('button', { name: 'Crear nueva bebida' }),
+    ).toBeDisabled();
+    expect(
+      screen.getByRole('button', { name: 'Añadir bebida al menú' }),
     ).toBeDisabled();
     expect(screen.queryByRole('table')).not.toBeInTheDocument();
   });
@@ -97,12 +114,14 @@ describe('DrinkPage', () => {
       };
       return ok({ mensaje: 'Item creado correctamente' });
     });
-    render(<DrinkPage />);
+    renderPage();
     await chooseCobot(user, 'Cobot JAKA');
     await screen.findByRole('table', { name: 'Bebidas del menú' });
 
-    await user.click(screen.getByRole('button', { name: 'Agregar bebida' }));
-    const dialog = screen.getByRole('dialog', { name: 'Agregar bebida' });
+    await user.click(
+      screen.getByRole('button', { name: 'Crear nueva bebida' }),
+    );
+    const dialog = screen.getByRole('dialog', { name: 'Crear nueva bebida' });
     await fillDrinkForm(user, dialog);
     await user.click(within(dialog).getByRole('button', { name: 'Guardar' }));
 
@@ -116,6 +135,33 @@ describe('DrinkPage', () => {
     expect(countCalls(get, drinksUrl('CBT000T'))).toBe(2);
   });
 
+  it('al hacer clic en "Añadir bebida al menú" abre el modal correspondiente y permite cerrarlo', async () => {
+    const user = userEvent.setup();
+    mockGet({
+      [COBOTS_URL]: () => COBOTS,
+      [`${API_BASE_URL}/catalog/all-items`]: () => ({
+        items: [{ id_item: 1, nombre_item: 'Mojito Clásico' }],
+      }),
+    });
+    renderPage();
+
+    const addBtn = await screen.findByRole('button', {
+      name: 'Añadir bebida al menú',
+    });
+    await waitFor(() => expect(addBtn).toBeEnabled());
+    await user.click(addBtn);
+
+    const dialog = screen.getByRole('dialog', {
+      name: 'Agregar bebidas al menú',
+    });
+    expect(dialog).toBeInTheDocument();
+
+    await user.click(within(dialog).getByRole('button', { name: 'Cancelar' }));
+    await waitFor(() =>
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument(),
+    );
+  });
+
   it('si la respuesta de un cobot anterior llega tarde, no pisa la tabla del cobot elegido', async () => {
     const user = userEvent.setup();
     const slowJaka = deferred<DrinksDto>();
@@ -124,10 +170,10 @@ describe('DrinkPage', () => {
       [drinksUrl('CBT000T')]: () => slowJaka.promise,
       [drinksUrl('CBT001')]: () => MENU_NORTE,
     });
-    render(<DrinkPage />);
+    renderPage();
 
-    await chooseCobot(user, 'Cobot JAKA'); // su respuesta tarda
-    await chooseCobot(user, 'Cobot Norte'); // el admin cambia antes de que llegue
+    await chooseCobot(user, 'Cobot JAKA');
+    await chooseCobot(user, 'Cobot Norte');
     expect(await screen.findByText('Whisky')).toBeInTheDocument();
 
     await act(async () => {

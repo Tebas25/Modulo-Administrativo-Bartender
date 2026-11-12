@@ -2,6 +2,7 @@ import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import { apiClient } from '../../src/api/axios.instance';
+import { ToastProvider } from '../../src/components/Toast.provider';
 import { DRINKS_ERROR_MESSAGES } from '../../src/constants/endpoints.constants';
 import { CreateDrinkModal } from '../../src/pages/CreateDrinkPage';
 import {
@@ -17,13 +18,15 @@ function renderModal() {
   const onClose = vi.fn();
   const onSuccess = vi.fn();
   render(
-    <CreateDrinkModal
-      cobotOptions={OPTIONS}
-      onClose={onClose}
-      onSuccess={onSuccess}
-    />,
+    <ToastProvider>
+      <CreateDrinkModal
+        cobotOptions={OPTIONS}
+        onClose={onClose}
+        onSuccess={onSuccess}
+      />
+    </ToastProvider>,
   );
-  const dialog = screen.getByRole('dialog', { name: 'Agregar bebida' });
+  const dialog = screen.getByRole('dialog', { name: 'Crear nueva bebida' });
   return { dialog, onClose, onSuccess };
 }
 
@@ -39,7 +42,9 @@ describe('CreateDrinkModal', () => {
       await screen.findByText('Ingrese el nombre de la bebida'),
     ).toBeInTheDocument();
     expect(screen.getByText('Ingrese los ingredientes')).toBeInTheDocument();
-    expect(screen.getByText('Ingrese el precio')).toBeInTheDocument();
+    expect(
+      screen.getByText('Copie la URL de la imagen a guardar'),
+    ).toBeInTheDocument();
     expect(screen.getByText('Ingrese el código Modbus')).toBeInTheDocument();
     expect(post).not.toHaveBeenCalled();
     expect(onSuccess).not.toHaveBeenCalled();
@@ -71,7 +76,9 @@ describe('CreateDrinkModal', () => {
       DRINKS_ERROR_MESSAGES.createNewDrink,
     );
     expect(onSuccess).not.toHaveBeenCalled();
-    expect(screen.getByRole('dialog')).toBeInTheDocument();
+    expect(
+      screen.getByRole('dialog', { name: 'Crear nueva bebida' }),
+    ).toBeInTheDocument();
     expect(
       within(dialog).getByRole('button', { name: 'Guardar' }),
     ).toBeEnabled();

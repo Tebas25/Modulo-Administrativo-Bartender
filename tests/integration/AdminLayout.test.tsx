@@ -1,8 +1,10 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import type { ReactElement } from 'react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { beforeEach, describe, expect, it } from 'vitest';
 import AdminLayout from '../../src/components/layout/AdminLayout';
+import { useToast } from '../../src/components/Toast.provider';
 import { ROUTES } from '../../src/constants/routes.constants';
 import { ACCESS_TOKEN_KEY } from '../../src/constants/endpoints.constants';
 import { AuthProvider } from '../../src/providers/AuthProvider';
@@ -10,7 +12,9 @@ import { ProtectedRoute } from '../../src/routes/ProtectedRoute';
 import { validToken } from '../helpers/jwt';
 
 // El layout se prueba con una pantalla falsa: aquí no importa qué hay dentro del Outlet.
-function renderLayout() {
+function renderLayout(
+  screenElement: ReactElement = <p>Contenido de la pantalla</p>,
+) {
   return render(
     <AuthProvider>
       <MemoryRouter initialEntries={[ROUTES.menu]}>
@@ -18,15 +22,21 @@ function renderLayout() {
           <Route path={ROUTES.login} element={<p>Pantalla de login</p>} />
           <Route element={<ProtectedRoute />}>
             <Route element={<AdminLayout />}>
-              <Route
-                path={ROUTES.menu}
-                element={<p>Contenido de la pantalla</p>}
-              />
+              <Route path={ROUTES.menu} element={screenElement} />
             </Route>
           </Route>
         </Routes>
       </MemoryRouter>
     </AuthProvider>,
+  );
+}
+
+function ScreenWithToast() {
+  const toast = useToast();
+  return (
+    <button type="button" onClick={() => toast.success({ title: 'Guardado' })}>
+      Avisar
+    </button>
   );
 }
 
@@ -80,5 +90,16 @@ describe('AdminLayout', () => {
     expect(
       screen.getByRole('button', { name: 'Ocultar menú lateral' }),
     ).toBeInTheDocument();
+  });
+
+  it('ofrece notificaciones a las pantallas que se muestran dentro', async () => {
+    const user = userEvent.setup();
+    renderLayout(<ScreenWithToast />);
+
+    await user.click(screen.getByRole('button', { name: 'Avisar' }));
+
+    expect(
+      screen.getByRole('region', { name: 'Notificaciones' }),
+    ).toHaveTextContent('Guardado');
   });
 });

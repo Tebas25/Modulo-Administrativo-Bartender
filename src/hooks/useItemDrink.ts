@@ -18,7 +18,7 @@ export const useItemDrinks = () => {
           err instanceof Error ? err.message : COBOT_ERROR_MESSAGES.unavailable,
         );
       } finally {
-        setLoading(true);
+        setLoading(false);
       }
     };
     fetchAllItemDrinks();

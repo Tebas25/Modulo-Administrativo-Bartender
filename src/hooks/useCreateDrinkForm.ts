@@ -45,7 +45,7 @@ export const useCreateDrinkForm = (onSuccess: () => void) => {
           ? err.message
           : DRINKS_ERROR_MESSAGES.createNewDrink,
       );
-      toast.success({
+      toast.error({
         title: 'Error al crear la bebida',
         body: `${DRINKS_ERROR_MESSAGES.createNewDrink}`,
       });

@@ -4,13 +4,14 @@ import { apiClient } from '../../src/api/axios.instance';
 import {
   createNewDrink,
   getAllDrinks,
+  getAllItemDrinks,
   updateDrinkAvailability,
 } from '../../src/api/drinks.request';
 import {
   API_BASE_URL,
   DRINKS_ERROR_MESSAGES,
 } from '../../src/constants/endpoints.constants';
-import type { CreateNewDrinkDto, DrinksDto } from '../../src/types/drinks.dto';
+import type { DrinksDto, GetDrinkCatalogDto } from '../../src/types/drinks.dto';
 
 const COBOT_ID = 'CBT000T';
 
@@ -56,6 +57,36 @@ describe('getAllDrinks', () => {
   });
 });
 
+// En describe('getAllItemDrinks', ...) dentro de tests/unit/drinks.request.test.ts:
+describe('getAllItemDrinks', () => {
+  it('pide el catálogo completo de bebidas y devuelve el cuerpo de la respuesta', async () => {
+    const data: GetDrinkCatalogDto = {
+      items: [
+        {
+          id_item: 1,
+          nombre_item: 'Mojito Clásico',
+        },
+      ],
+    };
+    const get = vi.spyOn(apiClient, 'get').mockResolvedValue(ok(data));
+
+    const result = await getAllItemDrinks();
+
+    expect(get).toHaveBeenCalledWith(`${API_BASE_URL}/catalog/all-items`);
+    expect(result).toEqual(data);
+  });
+
+  it('traduce un error de Axios al mensaje amigable y conserva la causa', async () => {
+    const cause = networkError();
+    vi.spyOn(apiClient, 'get').mockRejectedValue(cause);
+
+    const error = await captureError(getAllItemDrinks());
+
+    expect(error.message).toBe(DRINKS_ERROR_MESSAGES.unavailable);
+    expect(error.cause).toBe(cause);
+  });
+});
+
 describe('updateDrinkAvailability', () => {
   it('envía el PATCH con los nombres que espera el backend', async () => {
     const patch = vi
@@ -87,13 +118,12 @@ describe('updateDrinkAvailability', () => {
 });
 
 describe('createNewDrink', () => {
-  const newDrink: CreateNewDrinkDto = {
+  // Crear una bebida ahora es crear un ítem del catálogo: sin precio, estado ni cobot.
+  const newDrink: Parameters<typeof createNewDrink>[0] = {
     itemName: 'Ron con Cola',
-    itemPrice: 5.5,
-    state: true,
     ingredients: 'Ron, Coca-Cola',
+    image: 'ron-con-cola.png',
     modbusCode: 7,
-    cobotId: COBOT_ID,
   };
 
   it('envía el POST con el cuerpo traducido a los nombres del backend', async () => {
@@ -105,11 +135,9 @@ describe('createNewDrink', () => {
 
     expect(post).toHaveBeenCalledWith('/catalog/add-item', {
       nombre_item: 'Ron con Cola',
-      precio_item: 5.5,
-      estado: true,
       ingredientes: 'Ron, Coca-Cola',
+      imagen: 'ron-con-cola.png',
       codigo_modbus: 7,
-      id_cobot: COBOT_ID,
     });
   });
 

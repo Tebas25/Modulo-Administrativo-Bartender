@@ -2,6 +2,7 @@ import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import { apiClient } from '../../src/api/axios.instance';
+import { ToastProvider } from '../../src/components/Toast.provider';
 import { DRINKS_ERROR_MESSAGES } from '../../src/constants/endpoints.constants';
 import DrinkMenu from '../../src/pages/DrinkMenu';
 import {
@@ -14,13 +15,20 @@ import {
   ok,
 } from '../helpers/catalog';
 
+const renderMenu = (cobotId = COBOT_ID) =>
+  render(
+    <ToastProvider>
+      <DrinkMenu cobotId={cobotId} />
+    </ToastProvider>,
+  );
+
 const getToggle = (drinkName: string) =>
   screen.findByRole('switch', { name: `Disponibilidad de ${drinkName}` });
 
 describe('DrinkMenu', () => {
   it('muestra "cargando" y luego la tabla con el precio y la disponibilidad de cada bebida', async () => {
     mockGet({ [drinksUrl(COBOT_ID)]: () => MENU_JAKA });
-    render(<DrinkMenu cobotId={COBOT_ID} />);
+    renderMenu();
     expect(screen.getByRole('status')).toBeInTheDocument();
 
     const table = await screen.findByRole('table', {
@@ -47,7 +55,7 @@ describe('DrinkMenu', () => {
       await response.promise;
       return ok({ status: 'success' });
     });
-    render(<DrinkMenu cobotId={COBOT_ID} />);
+    renderMenu();
     const toggle = await getToggle('Mojito Clásico');
 
     await user.click(toggle);
@@ -72,7 +80,7 @@ describe('DrinkMenu', () => {
     const user = userEvent.setup();
     mockGet({ [drinksUrl(COBOT_ID)]: () => MENU_JAKA });
     vi.spyOn(apiClient, 'patch').mockRejectedValue(networkError());
-    render(<DrinkMenu cobotId={COBOT_ID} />);
+    renderMenu();
     const toggle = await getToggle('Mojito Clásico');
 
     await user.click(toggle);
@@ -90,7 +98,7 @@ describe('DrinkMenu', () => {
         throw networkError();
       },
     });
-    render(<DrinkMenu cobotId={COBOT_ID} />);
+    renderMenu();
 
     expect(await screen.findByRole('alert')).toHaveTextContent(
       DRINKS_ERROR_MESSAGES.unavailable,
