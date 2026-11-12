@@ -19,7 +19,7 @@ export const useLoginForm = () => {
         setError('');
         setLoading(true);
         await login(formData);
-        navigate(ROUTES.dashboard, { replace: true });
+        navigate(ROUTES.resume, { replace: true });
       } catch (err) {
         setError(
           err instanceof Error

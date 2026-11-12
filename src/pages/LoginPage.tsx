@@ -5,13 +5,14 @@ import { useLoginForm } from '../hooks/useLoginForm';
 import { useAuth } from '../hooks/useAuth';
 import { Navigate } from 'react-router-dom';
 import { ROUTES } from '../constants/routes.constants';
+import { Loading } from '../components/Loading.component';
 
 export default function LoginScreen() {
   const { handleSubmitLogin, isLoading, error, clearError, register, errors } =
     useLoginForm();
   const { isAuthenticated } = useAuth();
   if (isAuthenticated) {
-    return <Navigate to={ROUTES.dashboard} replace />;
+    return <Navigate to={ROUTES.resume} replace />;
   }
   return (
     <div className="bg-bar-950 flex min-h-screen w-full">
@@ -59,15 +60,18 @@ export default function LoginScreen() {
               </p>
             )}
 
-            <Button
-              type="submit"
-              variant="primary"
-              size="xl"
-              className="w-full"
-              disabled={isLoading}
-            >
-              {isLoading ? 'Ingresando...' : 'Ingresar'}
-            </Button>
+            {isLoading ? (
+              <Loading size="lg" centered={true} className="w-full py-3" />
+            ) : (
+              <Button
+                type="submit"
+                variant="primary"
+                size="xl"
+                className="w-full"
+              >
+                Ingresar
+              </Button>
+            )}
           </form>
         </div>
       </div>

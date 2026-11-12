@@ -1,14 +1,68 @@
 @import 'tailwindcss';
 
 @theme {
-  --color-bar-950: #070b10;
-  --color-bar-900: #0d141c;
-  --color-bar-800: #16212d;
+  /* OPCIÓN A (Activa): Espresso & Barrica Ahumada (Cálido, cero azul) */
+  /* --color-bar-950: #14110f;
+  --color-bar-900: #1f1916;
+  --color-bar-800: #2e2520; */
 
-  --color-steel-300: #a9c1da;
-  --color-steel-400: #7fa0c3;
+  /* OPCIÓN B: Si prefieres Burdeos / Vino Nocturno, descomenta estas 3: */
+  /* --color-bar-950: #190e12;
+  --color-bar-900: #26151b;
+  --color-bar-800: #381f28; */
 
+  /* OPCIÓN C: Si prefieres Verde Botánico / Gin Lounge, descomenta estas 3: */
+  --color-bar-950: #0c1713;
+  --color-bar-900: #13241e;
+  --color-bar-800: #1c332b;
+
+  /* Tonos Crema / Piedra Cálida (Reemplaza el gris azulado frío) */
+  --color-steel-300: #d6cfc7;
+  --color-steel-400: #a89f94;
+
+  /* Tus Tonos Dorados / Ámbar */
+  --color-gold-50: #fbf7f0;
+  --color-gold-100: #f5ebd9;
   --color-gold-500: #c9964a;
   --color-gold-600: #ab7a3a;
   --color-gold-700: #8f6630;
+
+  --animate-toast-in: toast-in 0.25s ease-out;
+  --animate-toast-out: toast-out 0.2s ease-in forwards;
+
+  @keyframes toast-in {
+    from {
+      opacity: 0;
+      transform: translateX(1rem);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  @keyframes toast-out {
+    from {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    to {
+      opacity: 0;
+      transform: translateX(1rem);
+    }
+  }
+}
+@media (min-width: 1920px) {
+  html {
+    font-size: 18px;
+  }
+}
+@media (min-width: 2400px) {
+  html {
+    font-size: 20px;
+  }
+}
+@media (min-width: 3000px) {
+  html {
+    font-size: 24px;
+  }
 }
