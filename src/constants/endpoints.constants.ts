@@ -21,3 +21,8 @@ export const DRINKS_ERROR_MESSAGES = {
 export const COBOT_ERROR_MESSAGES = {
   unavailable: 'Ha ocurrido un error. Inténtelo de nuevo más tarde',
 };
+
+export const MENU_ERROR_MESSAGES = {
+  unavailable: 'Ha ocurrido un error. Inténtelo de nuevo más tarde',
+  addMenu: 'No se ha podido agregar la bebida. Inténtelo de nuevo más tarde',
+};

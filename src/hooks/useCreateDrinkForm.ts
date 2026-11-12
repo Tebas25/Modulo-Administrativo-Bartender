@@ -1,14 +1,14 @@
 import { useState } from 'react';
-import { useController, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { createNewDrink } from '../api/drinks.request';
 import { DRINKS_ERROR_MESSAGES } from '../constants/endpoints.constants';
 import type { CreateNewDrinkDto } from '../types/drinks.dto';
+import { useToast } from '../components/Toast.provider';
 
 const DEFAULT_VALUES: Partial<CreateNewDrinkDto> = {
-  cobotId: '',
   itemName: '',
   ingredients: '',
-  state: true,
+  image: '',
 };
 
 const toInputState = (message?: string) => ({
@@ -17,10 +17,10 @@ const toInputState = (message?: string) => ({
 });
 
 export const useCreateDrinkForm = (onSuccess: () => void) => {
+  const toast = useToast();
   const [error, setError] = useState<string | null>(null);
   const {
     register,
-    control,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<CreateNewDrinkDto>({
@@ -28,17 +28,16 @@ export const useCreateDrinkForm = (onSuccess: () => void) => {
     defaultValues: DEFAULT_VALUES,
   });
 
-  const cobot = useController({
-    name: 'cobotId',
-    control,
-    rules: { required: 'Seleccione un cobot' },
-  });
-  const state = useController({ name: 'state', control });
-
   const handleCreateNewDrink = handleSubmit(async (formData) => {
     setError(null);
     try {
       await createNewDrink(formData);
+
+      toast.success({
+        title: 'Bebida creada',
+        body: `${formData.itemName} se agregó al menú correctamente.`,
+      });
+
       onSuccess();
     } catch (err) {
       setError(
@@ -46,6 +45,10 @@ export const useCreateDrinkForm = (onSuccess: () => void) => {
           ? err.message
           : DRINKS_ERROR_MESSAGES.createNewDrink,
       );
+      toast.success({
+        title: 'Error al crear la bebida',
+        body: `${DRINKS_ERROR_MESSAGES.createNewDrink}`,
+      });
     }
   });
 
@@ -62,13 +65,11 @@ export const useCreateDrinkForm = (onSuccess: () => void) => {
         ...register('ingredients', { required: 'Ingrese los ingredientes' }),
         ...toInputState(errors.ingredients?.message),
       },
-      itemPrice: {
-        ...register('itemPrice', {
-          valueAsNumber: true,
-          required: 'Ingrese el precio',
-          min: { value: 0.01, message: 'El precio debe ser mayor a 0' },
+      image: {
+        ...register('image', {
+          required: 'Copie la URL de la imagen a guardar',
         }),
-        ...toInputState(errors.itemPrice?.message),
+        ...toInputState(errors.image?.message),
       },
       modbusCode: {
         ...register('modbusCode', {
@@ -80,15 +81,6 @@ export const useCreateDrinkForm = (onSuccess: () => void) => {
         }),
         ...toInputState(errors.modbusCode?.message),
       },
-    },
-    cobotField: {
-      value: cobot.field.value,
-      onChange: cobot.field.onChange,
-      error: cobot.fieldState.error?.message,
-    },
-    stateField: {
-      checked: state.field.value,
-      onChange: state.field.onChange,
     },
     error,
     isSubmitting,

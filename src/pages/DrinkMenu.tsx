@@ -9,7 +9,7 @@ interface DrinkMenuProps {
 }
 
 export default function DrinkMenu({ cobotId }: DrinkMenuProps) {
-  const { drinks, isLoading, error, pendingNames, toggleError, toggleDrink } =
+  const { drinks, isLoading, error, pendingNames, toggleDrink } =
     useDrinks(cobotId);
 
   const columns: Column<DrinkItemDto>[] = [
@@ -22,14 +22,14 @@ export default function DrinkMenu({ cobotId }: DrinkMenuProps) {
       header: 'Disponibilidad',
       align: 'center',
       cell: (drink) => (
-        <div className="flex items-center justify-center gap-4">
+        <div className="flex items-center justify-center gap-4 xl:gap-6">
           <Switch
             label={`Disponibilidad de ${drink.nombre_item}`}
             checked={drink.estado}
             disabled={pendingNames.includes(drink.nombre_item)}
             onChange={(next) => toggleDrink(drink.nombre_item, next)}
           />
-          <span className="w-40 text-left text-lg text-slate-800">
+          <span className="w-40 text-left text-lg text-slate-800 xl:w-48 xl:text-xl">
             {drink.estado ? 'Disponible' : 'No disponible'}
           </span>
         </div>
@@ -39,15 +39,6 @@ export default function DrinkMenu({ cobotId }: DrinkMenuProps) {
 
   return (
     <section className="w-full">
-      {toggleError && (
-        <p
-          role="alert"
-          className="mb-6 rounded-xl border border-red-300 bg-red-50 px-6 py-4 text-lg font-medium text-red-700"
-        >
-          {toggleError}
-        </p>
-      )}
-
       {isLoading ? (
         <div className="text-xl text-slate-700">
           <Loading size="lg" centered />

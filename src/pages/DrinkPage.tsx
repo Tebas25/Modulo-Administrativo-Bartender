@@ -4,11 +4,13 @@ import { Button } from '../components/Button.component';
 import { CreateDrinkModal } from './CreateDrinkPage';
 import DrinkMenu from './DrinkMenu';
 import { useCobots } from '../hooks/useCobot';
+import { AddItemMenuModal } from './AddItemMenuPage';
 
 export default function DrinkPage() {
   const { cobots, isLoading, error } = useCobots();
   const [cobotId, setCobotId] = useState('');
   const [isOpen, setOpen] = useState(false);
+  const [isAddItemOpen, setAddItemOpen] = useState(false);
   const [menuVersion, setMenuVersion] = useState(0);
 
   const options = cobots.map((cobot) => ({
@@ -18,11 +20,13 @@ export default function DrinkPage() {
 
   return (
     <section className="w-full">
-      <h1 className="text-5xl font-bold text-black">Configuración de menú</h1>
+      <h1 className="text-3xl font-bold text-black sm:text-4xl xl:text-5xl">
+        Configuración de menú
+      </h1>
 
-      <div className="mt-8 mb-10 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+      <div className="mt-8 mb-10 flex flex-col gap-4 lg:flex-row lg:items-end lg:gap-6 xl:mt-10 xl:mb-12">
         <SelectList
-          className="w-full max-w-xl"
+          className="w-full lg:max-w-xl lg:flex-1 2xl:max-w-2xl"
           options={options}
           value={cobotId}
           onChange={setCobotId}
@@ -32,15 +36,27 @@ export default function DrinkPage() {
           isLoading={isLoading}
         />
 
-        <Button
-          variant="primary"
-          size="xl"
-          className="w-full md:w-auto"
-          disabled={isLoading || !!error || options.length === 0}
-          onClick={() => setOpen(true)}
-        >
-          Agregar bebida
-        </Button>
+        <div className="flex flex-col gap-3 sm:flex-row sm:gap-4 lg:ml-auto xl:gap-6">
+          <Button
+            variant="primary"
+            size="xl"
+            className="h-16 w-full px-8 whitespace-nowrap sm:w-auto"
+            disabled={isLoading || !!error || options.length === 0}
+            onClick={() => setOpen(true)}
+          >
+            Crear nueva bebida
+          </Button>
+
+          <Button
+            variant="primary"
+            size="xl"
+            className="h-16 w-full px-8 whitespace-nowrap sm:w-auto"
+            disabled={isLoading || !!error || options.length === 0}
+            onClick={() => setAddItemOpen(true)}
+          >
+            Añadir bebida al menú
+          </Button>
+        </div>
       </div>
 
       {error ? (
@@ -61,6 +77,17 @@ export default function DrinkPage() {
           onClose={() => setOpen(false)}
           onSuccess={() => {
             setOpen(false);
+            setMenuVersion((version) => version + 1);
+          }}
+        />
+      )}
+
+      {isAddItemOpen && (
+        <AddItemMenuModal
+          cobotOptions={options}
+          onClose={() => setAddItemOpen(false)}
+          onSuccess={() => {
+            setAddItemOpen(false);
             setMenuVersion((version) => version + 1);
           }}
         />

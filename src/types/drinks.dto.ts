@@ -22,18 +22,23 @@ export interface UpdateItemPriceDto {
 
 export interface SentCreateNewDrinkDto {
   nombre_item: string;
-  precio_item: number;
-  estado: boolean;
   ingredientes: string;
+  imagen: string;
   codigo_modbus: number;
-  id_cobot: string;
 }
 
 export interface CreateNewDrinkDto {
   itemName: string;
-  itemPrice: number;
-  state: boolean;
   ingredients: string;
-  cobotId: string;
+  image: string;
   modbusCode: number;
+}
+
+export interface GetItemDto {
+  id_item: number;
+  nombre_item: string;
+}
+
+export interface GetDrinkCatalogDto {
+  items: GetItemDto[];
 }

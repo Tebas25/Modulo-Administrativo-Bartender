@@ -5,6 +5,7 @@ import type {
   UpdateItemPriceDto,
   UpdateItemStateDto,
   DrinksDto,
+  GetDrinkCatalogDto,
 } from '../types/drinks.dto';
 import {
   API_BASE_URL,
@@ -76,17 +77,30 @@ export const createNewDrink = async (
 ): Promise<void> => {
   const payload: SentCreateNewDrinkDto = {
     nombre_item: createNewDrink.itemName,
-    precio_item: createNewDrink.itemPrice,
-    estado: createNewDrink.state,
     ingredientes: createNewDrink.ingredients,
+    imagen: createNewDrink.image,
     codigo_modbus: createNewDrink.modbusCode,
-    id_cobot: createNewDrink.cobotId,
   };
   try {
     await apiClient.post('/catalog/add-item', payload);
   } catch (error) {
     if (isAxiosError(error)) {
       throw new Error(DRINKS_ERROR_MESSAGES.createNewDrink, { cause: error });
+    }
+    throw error;
+  }
+};
+
+export const getAllItemDrinks = async (): Promise<GetDrinkCatalogDto> => {
+  try {
+    const url = `${API_BASE_URL}/catalog/all-items`;
+    const response = await apiClient.get<GetDrinkCatalogDto>(url);
+    return response.data;
+  } catch (error) {
+    if (isAxiosError(error)) {
+      throw new Error(DRINKS_ERROR_MESSAGES.unavailable, {
+        cause: error,
+      });
     }
     throw error;
   }

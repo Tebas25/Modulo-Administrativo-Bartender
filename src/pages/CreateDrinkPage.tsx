@@ -1,11 +1,7 @@
 import { Button } from '../components/Button.component';
 import { FloatingInput } from '../components/FloatingLabel.component';
 import { Modal } from '../components/Modal.component';
-import {
-  SelectList,
-  type SelectOption,
-} from '../components/SelectList.component';
-import { Switch } from '../components/Switch.component';
+import { type SelectOption } from '../components/SelectList.component';
 import { useCreateDrinkForm } from '../hooks/useCreateDrinkForm';
 
 const FORM_ID = 'create-drink-form';
@@ -17,22 +13,15 @@ interface CreateDrinkModalProps {
 }
 
 export function CreateDrinkModal({
-  cobotOptions,
   onClose,
   onSuccess,
 }: CreateDrinkModalProps) {
-  const {
-    fields,
-    cobotField,
-    stateField,
-    error,
-    isSubmitting,
-    handleCreateNewDrink,
-  } = useCreateDrinkForm(onSuccess);
+  const { fields, error, isSubmitting, handleCreateNewDrink } =
+    useCreateDrinkForm(onSuccess);
 
   return (
     <Modal
-      title="Agregar bebida"
+      title="Crear nueva bebida"
       size="lg"
       onClose={onClose}
       isBusy={isSubmitting}
@@ -64,15 +53,6 @@ export function CreateDrinkModal({
         noValidate
         className="space-y-10"
       >
-        <SelectList
-          label="Cobot"
-          options={cobotOptions}
-          placeholder="Seleccione un cobot"
-          searchPlaceholder="Buscar cobot..."
-          emptyMessage="No hay cobots que coincidan"
-          {...cobotField}
-        />
-
         <FloatingInput
           label="Nombre"
           tone="light"
@@ -89,12 +69,9 @@ export function CreateDrinkModal({
 
         <div className="grid gap-x-6 gap-y-10 md:grid-cols-2">
           <FloatingInput
-            label="Precio"
+            label="URL de la imagen"
             tone="light"
-            type="number"
-            step="0.01"
-            inputMode="decimal"
-            {...fields.itemPrice}
+            {...fields.image}
           />
 
           <FloatingInput
@@ -105,18 +82,6 @@ export function CreateDrinkModal({
             inputMode="decimal"
             {...fields.modbusCode}
           />
-        </div>
-
-        <div>
-          <p className="mb-2 text-lg font-bold text-black">
-            Disponibilidad inicial
-          </p>
-          <div className="flex items-center gap-4">
-            <Switch label="Disponible al crear la bebida" {...stateField} />
-            <span className="text-lg text-slate-800">
-              {stateField.checked ? 'Disponible' : 'No disponible'}
-            </span>
-          </div>
         </div>
 
         {error && (
